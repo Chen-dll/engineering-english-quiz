@@ -460,6 +460,88 @@
       white-space: pre-wrap;
     }
 
+    .answer-sheet-shell {
+      margin: 0 0 22px;
+      box-shadow: none;
+      display: none;
+    }
+
+    .answer-sheet-shell.show {
+      display: block;
+      animation: reveal .22s ease both;
+    }
+
+    .answer-sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .answer-sheet-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .answer-list {
+      display: grid;
+      gap: 10px;
+      max-height: min(68vh, 760px);
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .answer-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 12px;
+    }
+
+    .answer-item-title {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .answer-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .answer-title-text {
+      min-width: 0;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .answer-text {
+      margin: 8px 0 0 38px;
+      padding: 10px 12px;
+      border-left: 4px solid var(--accent);
+      background: #f4efe3;
+      border-radius: 0 8px 8px 0;
+      white-space: pre-wrap;
+      line-height: 1.65;
+    }
+
+    .answer-explain {
+      margin: 8px 0 0 38px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
     .progress-wrap {
       margin: 16px 0 22px;
     }
@@ -660,6 +742,20 @@
         max-height: 130px;
       }
 
+      .answer-sheet-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .answer-item-title {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-text,
+      .answer-explain {
+        margin-left: 0;
+      }
+
       .library-grid {
         grid-template-columns: 1fr;
       }
@@ -770,6 +866,10 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
           模拟考试
         </button>
+        <button class="ghost-btn" id="answerSheetBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          答案速览
+        </button>
       </div>
 
       <div class="mock-banner" id="mockBanner">
@@ -777,6 +877,7 @@
         <button class="tiny-btn" id="exitMockBtn">退出模拟</button>
       </div>
 
+      <section class="question-shell answer-sheet-shell" id="answerSheetShell"></section>
       <section class="question-shell" id="questionShell"></section>
       <section class="question-shell library-shell" id="coverageShell"></section>
     </main>
@@ -1453,6 +1554,7 @@
       favorites: [],
       streak: 0,
       bestStreak: 0,
+      showAnswerSheet: false,
       mockIds: [],
       mockEndsAt: null,
       mockTimer: null
@@ -1474,6 +1576,8 @@
       exportBtn: document.getElementById("exportBtn"),
       printBtn: document.getElementById("printBtn"),
       mockBtn: document.getElementById("mockBtn"),
+      answerSheetBtn: document.getElementById("answerSheetBtn"),
+      answerSheetShell: document.getElementById("answerSheetShell"),
       mockBanner: document.getElementById("mockBanner"),
       mockInfo: document.getElementById("mockInfo"),
       exitMockBtn: document.getElementById("exitMockBtn"),
@@ -1928,6 +2032,86 @@
       `;
     }
 
+    function renderAnswerSheet() {
+      els.answerSheetBtn.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        ${state.showAnswerSheet ? "隐藏答案" : "答案速览"}
+      `;
+
+      if (!state.showAnswerSheet) {
+        els.answerSheetShell.classList.remove("show");
+        els.answerSheetShell.innerHTML = "";
+        return;
+      }
+
+      const pool = getPool();
+      if (!pool.length) {
+        els.answerSheetShell.classList.add("show");
+        els.answerSheetShell.innerHTML = `<p class="empty">当前筛选没有题目答案。换一个题型或单元试试。</p>`;
+        return;
+      }
+
+      els.answerSheetShell.classList.add("show");
+      els.answerSheetShell.innerHTML = `
+        <div class="answer-sheet-head">
+          <div>
+            <div class="q-meta">
+              <span class="tag">答案速览</span>
+              <span class="tag secondary">${pool.length} 题</span>
+              <span class="tag secondary">${escapeHtml(state.unit)} · ${escapeHtml(state.type)} · ${escapeHtml(state.mode)}</span>
+            </div>
+            <h3>当前筛选范围的全部答案</h3>
+            <p class="prompt">用于考前背答案和快速核对。选择“全部”时显示完整 186 题；筛选单元或题型后只显示对应答案。</p>
+          </div>
+          <button class="tiny-btn" id="closeAnswerSheetBtn">收起</button>
+        </div>
+        <div class="answer-list">
+          ${pool.map((q, index) => answerItemHtml(q, index)).join("")}
+        </div>
+      `;
+
+      document.getElementById("closeAnswerSheetBtn")?.addEventListener("click", toggleAnswerSheet);
+      document.querySelectorAll("[data-answer-jump]").forEach(btn => {
+        btn.addEventListener("click", () => jumpToQuestion(btn.dataset.answerJump));
+      });
+    }
+
+    function answerItemHtml(q, index) {
+      const answer = q.mode === "choice"
+        ? `${letters[q.answer]}. ${q.options[q.answer]}`
+        : q.sample;
+      const prompt = q.mode === "written" ? `<p class="answer-explain"><strong>题干：</strong>${escapeHtml(q.prompt)}</p>` : "";
+      const keywords = q.mode === "written" ? `<p class="answer-explain"><strong>关键词：</strong>${q.keywords.map(escapeHtml).join("；")}</p>` : "";
+      return `
+        <article class="answer-item">
+          <div class="answer-item-title">
+            <span class="answer-number">${index + 1}</span>
+            <div>
+              <div class="q-meta">
+                <span class="tag">${escapeHtml(q.unit)}</span>
+                <span class="tag secondary">${escapeHtml(q.type)}</span>
+                <span class="tag secondary">${escapeHtml(q.source)}</span>
+              </div>
+              <div class="answer-title-text">${escapeHtml(q.title)}</div>
+            </div>
+            <button class="tiny-btn" data-answer-jump="${escapeHtml(q.id)}">练这题</button>
+          </div>
+          ${prompt}
+          <div class="answer-text"><strong>${q.mode === "choice" ? "正确答案" : "参考答案/评分要点"}：</strong>${escapeHtml(answer)}</div>
+          <p class="answer-explain"><strong>解析：</strong>${escapeHtml(q.explanation)}</p>
+          ${keywords}
+        </article>
+      `;
+    }
+
+    function toggleAnswerSheet() {
+      state.showAnswerSheet = !state.showAnswerSheet;
+      renderAnswerSheet();
+      if (state.showAnswerSheet) {
+        els.answerSheetShell.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
     function jumpToQuestion(id) {
       const q = quizData.find(item => item.id === id);
       if (!q) return;
@@ -2026,6 +2210,7 @@
     function render() {
       renderFilters();
       renderQuestion();
+      renderAnswerSheet();
       renderStats();
       renderCoverage();
     }
@@ -2051,11 +2236,13 @@
     els.exportBtn.addEventListener("click", exportProgress);
     els.printBtn.addEventListener("click", () => window.print());
     els.mockBtn.addEventListener("click", startMockExam);
+    els.answerSheetBtn.addEventListener("click", toggleAnswerSheet);
     els.exitMockBtn.addEventListener("click", exitMockExam);
     els.searchInput.addEventListener("input", event => {
       state.search = event.target.value.trim();
       state.current = 0;
       renderQuestion();
+      renderAnswerSheet();
       renderStats();
       renderCoverage();
     });
