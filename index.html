@@ -450,6 +450,16 @@
       margin: 8px 0;
     }
 
+    .stem-translation {
+      background: #fffaf0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      line-height: 1.7;
+      color: #3d3d3d;
+    }
+
     .answer-box {
       background: #f4efe3;
       border-left: 4px solid var(--accent);
@@ -540,6 +550,10 @@
       color: var(--muted);
       line-height: 1.65;
       font-size: 13px;
+    }
+
+    .answer-translation {
+      color: #3d3d3d;
     }
 
     .progress-wrap {
@@ -1538,6 +1552,55 @@
     const typeLabels = ["全部", "词汇", "短语", "阅读", "翻译", "写作"];
     const unitLabels = ["全部", "U1", "U2", "U3", "Chinese wisdom"];
     const letters = ["A", "B", "C", "D"];
+    const questionTranslations = {
+      "v-u1-1": "团队进行了一场高强度会议，来_____创新解决方案。",
+      "v-u1-2": "黑客试图_____防火墙。",
+      "v-u1-3": "人工智能应当_____人类技能，而不是取代它们。",
+      "v-u1-4": "电子书的兴起在一些市场中已经_____传统纸质书。",
+      "v-u1-5": "一段包含某份文件主要观点的简短文字叫作_____。",
+      "v-u1-6": "可再生能源技术的早期采用者让自己_____。",
+      "v-u1-7": "这家新餐馆开业时_____，吸引了评论家和爱好者。",
+      "v-u2-1": "自然资源的_____正成为一个日益严重的问题。",
+      "v-u2-2": "这项新政策旨在_____企业采用可持续实践。",
+      "v-u2-3": "这项政策被设计成_____的，确保所有社会群体都能受益。",
+      "v-u2-4": "为了加强_____，政府和企业需要透明的报告机制。",
+      "v-u2-5": "经过数月谈判，双方最终_____一项协议。",
+      "v-u2-6": "研究团队_____科学研究来收集数据。",
+      "v-u2-7": "为实现某个特定目的而制定的计划叫作_____。",
+      "v-u3-1": "工厂计划_____几台机械臂。",
+      "v-u3-2": "这项任务的_____性质使它非常适合自动化。",
+      "v-u3-3": "这款软件旨在_____与人工录入数据相关的风险。",
+      "v-u3-4": "一些工人可能会_____机器人，把类似人类的特征归于它们。",
+      "v-u3-5": "汽车行业正在_____机器人技术。",
+      "v-u3-6": "与轮式系统相比，足式机器人仍然_____不稳定性。",
+      "r-u1-1": "《Workplace AI》的主要关注点是什么？",
+      "r-u1-2": "人工智能在提升工人技能组合方面起什么作用？",
+      "r-u1-3": "《Workplace AI》这篇文章整体语气是什么？",
+      "r-u1-4": "在《Spatial intelligence》中，桌上玻璃杯倾倒的例子说明了什么？",
+      "r-u1-5": "空间智能连接了哪两个方面？",
+      "r-u2-1": "《Turn eco-anxiety into bold action on nature》的主旨是什么？",
+      "r-u2-2": "Text B 中 sustainability 强调什么？",
+      "r-u2-3": "可持续发展的三个核心维度是什么？",
+      "r-u2-4": "政府和企业应加强什么来支持可持续发展？",
+      "r-u3-1": "“going all in on robotics” 意味着什么？",
+      "r-u3-2": "工厂工人在评价机器人时最看重什么？",
+      "r-u3-3": "Spot 在汽车工厂中的主要用途是什么？",
+      "r-u3-4": "为什么空间机器人需要更高的自主性？",
+      "r-u3-5": "力控制使机器人能够做什么？",
+      "r-cw-1": "如果 Chinese wisdom 阅读中提到“人与自然和谐”，它最可能与哪个考试主题相关？",
+      "r-cw-2": "哪个表达最能翻译“互利共赢”？",
+      "cw-u1-r1": "U1 Chinese wisdom：自 20 世纪 60 年代以来，中国政府已向 70 多个国家派遣医务人员。",
+      "cw-u1-r2": "U1 Chinese wisdom：使用经杀虫剂处理的蚊帐预防疟疾，最初由世界卫生组织推荐，之后由中国推广。",
+      "cw-u1-r3": "U1 Chinese wisdom：中国对全球卫生治理作出的一项主要贡献是什么？",
+      "cw-u2-r1": "U2 Chinese wisdom：文章开头为什么引用十八洞村的例子？",
+      "cw-u2-r2": "U2 Chinese wisdom：以下哪一项不是文中提到的扶贫措施？",
+      "cw-u2-r3": "U2 Chinese wisdom：政府在减贫中的优先事项是什么？",
+      "cw-u2-r4": "U2 Chinese wisdom：关于中国扶贫成就，哪一项说法正确？",
+      "cw-u3-r1": "U3 Chinese wisdom：中国承诺到 2030 年实现碳中和。",
+      "cw-u3-r2": "U3 Chinese wisdom：2012 年至 2022 年，中国单位 GDP 碳排放降低了 34.4%。",
+      "cw-u3-r3": "U3 Chinese wisdom：中国碳排放权交易体系旨在鼓励什么？",
+      "cw-u3-r4": "U3 Chinese wisdom：中国在全球层面为应对气候变化做了什么？"
+    };
 
     let state = {
       type: "全部",
@@ -1777,15 +1840,32 @@
       }
     }
 
+    function questionTranslation(q) {
+      if (questionTranslations[q.id]) return questionTranslations[q.id];
+      if (q.id.startsWith("bank-")) {
+        const item = wordBank[Number(q.id.replace("bank-", ""))];
+        if (item) return `全量词库题：${item.term} 的中文释义、核心搭配和考试考点是什么？`;
+      }
+      if (q.mode === "written" && q.prompt) {
+        return `题目要求：${q.prompt}`;
+      }
+      return "";
+    }
+
     function feedbackHtml(q, record) {
       if (!record) return `<div class="feedback" id="feedback"></div>`;
       const status = record.correct ? "回答正确" : q.mode === "written" ? `关键词命中 ${record.hits}/${q.keywords.length}` : "回答错误";
       const extra = q.mode === "written" && record.missing?.length
         ? `<p><strong>还缺：</strong>${record.missing.map(escapeHtml).join("；")}</p>`
         : "";
+      const translation = questionTranslation(q);
+      const translationHtml = translation
+        ? `<div class="stem-translation"><strong>题干翻译/题意：</strong>${escapeHtml(translation)}</div>`
+        : "";
       return `
         <div class="feedback show" id="feedback">
           <h3>${status}</h3>
+          ${translationHtml}
           <p>${escapeHtml(q.explanation)}</p>
           ${extra}
           <div class="answer-box">${q.mode === "choice" ? `正确答案：${letters[q.answer]}. ${escapeHtml(q.options[q.answer])}` : `参考答案/评分要点：\n${escapeHtml(q.sample)}`}</div>
@@ -2080,7 +2160,9 @@
       const answer = q.mode === "choice"
         ? `${letters[q.answer]}. ${q.options[q.answer]}`
         : q.sample;
+      const translation = questionTranslation(q);
       const prompt = q.mode === "written" ? `<p class="answer-explain"><strong>题干：</strong>${escapeHtml(q.prompt)}</p>` : "";
+      const translationHtml = translation ? `<p class="answer-explain answer-translation"><strong>题干翻译/题意：</strong>${escapeHtml(translation)}</p>` : "";
       const keywords = q.mode === "written" ? `<p class="answer-explain"><strong>关键词：</strong>${q.keywords.map(escapeHtml).join("；")}</p>` : "";
       return `
         <article class="answer-item">
@@ -2097,6 +2179,7 @@
             <button class="tiny-btn" data-answer-jump="${escapeHtml(q.id)}">练这题</button>
           </div>
           ${prompt}
+          ${translationHtml}
           <div class="answer-text"><strong>${q.mode === "choice" ? "正确答案" : "参考答案/评分要点"}：</strong>${escapeHtml(answer)}</div>
           <p class="answer-explain"><strong>解析：</strong>${escapeHtml(q.explanation)}</p>
           ${keywords}
