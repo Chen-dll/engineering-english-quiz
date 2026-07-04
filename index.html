@@ -1,0 +1,2091 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工程英语期末互动刷题</title>
+  <style>
+    :root {
+      --bg: #f5f3ee;
+      --paper: #fffdf8;
+      --ink: #202124;
+      --muted: #656565;
+      --line: #ded8cc;
+      --accent: #0f766e;
+      --accent-dark: #0b5f59;
+      --accent-soft: #d9f0eb;
+      --warn: #b45309;
+      --bad: #b42318;
+      --good: #137333;
+      --shadow: 0 18px 46px rgba(32, 33, 36, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 300px;
+    }
+
+    .sidebar,
+    .inspector {
+      background: #ebe5d8;
+      border-color: var(--line);
+      min-height: 100svh;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      overflow: auto;
+      max-height: 100svh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 22px 18px;
+    }
+
+    .inspector {
+      border-left: 1px solid var(--line);
+      padding: 22px 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(15, 118, 110, .25);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav-group {
+      margin: 18px 0;
+    }
+
+    .nav-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+
+    .segmented {
+      display: grid;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      min-height: 38px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      color: var(--ink);
+      background: transparent;
+      text-align: left;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 253, 248, .72);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .count {
+      font-size: 12px;
+      opacity: .75;
+    }
+
+    .search-box {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 9px 11px;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .12);
+    }
+
+    .tiny-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tiny-btn {
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 8px;
+      background: rgba(255, 253, 248, .72);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 12px;
+    }
+
+    .mock-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 10px 0 18px;
+      padding: 10px 12px;
+      border: 1px solid rgba(15, 118, 110, .28);
+      border-radius: 8px;
+      background: #d9f0eb;
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .mock-banner.show {
+      display: flex;
+    }
+
+    .main {
+      padding: 26px clamp(18px, 4vw, 44px);
+      min-width: 0;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 42px);
+      line-height: 1.08;
+    }
+
+    .topbar p {
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 10px 0 0;
+    }
+
+    .blueprint {
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+      color: var(--accent);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0 22px;
+    }
+
+    .tool-btn,
+    .primary-btn,
+    .ghost-btn {
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 9px 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 10px 26px rgba(15, 118, 110, .22);
+    }
+
+    .tool-btn,
+    .ghost-btn {
+      background: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .primary-btn:hover,
+    .tool-btn:hover,
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .question-shell {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      opacity: 1;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.secondary {
+      background: #efe6d0;
+      color: #7c4a03;
+    }
+
+    .tag.favorite {
+      background: #ffe8a3;
+      color: #6d4600;
+    }
+
+    .question-title {
+      margin: 0 0 18px;
+      font-size: clamp(20px, 2.6vw, 28px);
+      line-height: 1.35;
+    }
+
+    .prompt {
+      margin: 0 0 18px;
+      color: #383838;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 52px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fffaf0;
+      color: var(--ink);
+      text-align: left;
+      line-height: 1.45;
+      transition: border .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .option:hover {
+      transform: translateX(2px);
+      border-color: #bcb2a2;
+    }
+
+    .letter {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #eee5d5;
+      color: #5d5346;
+      font-weight: 800;
+    }
+
+    .option.correct {
+      border-color: rgba(19, 115, 51, .45);
+      background: #e7f5eb;
+    }
+
+    .option.correct .letter {
+      background: var(--good);
+      color: white;
+    }
+
+    .option.wrong {
+      border-color: rgba(180, 35, 24, .42);
+      background: #fde8e6;
+    }
+
+    .option.wrong .letter {
+      background: var(--bad);
+      color: white;
+    }
+
+    .written-area {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 14px;
+      line-height: 1.65;
+      outline: none;
+    }
+
+    .written-area:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .12);
+    }
+
+    .keyword-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .keyword {
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #f1eadb;
+      color: var(--muted);
+    }
+
+    .keyword.hit {
+      color: var(--good);
+      background: #dff2e4;
+      font-weight: 700;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+      animation: reveal .22s ease both;
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .feedback h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .feedback p {
+      line-height: 1.72;
+      margin: 8px 0;
+    }
+
+    .answer-box {
+      background: #f4efe3;
+      border-left: 4px solid var(--accent);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .progress-wrap {
+      margin: 16px 0 22px;
+    }
+
+    .progress-line {
+      width: 100%;
+      height: 9px;
+      background: #ddd5c7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: inherit;
+      transition: width .28s ease;
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(122, 112, 95, .22);
+      font-size: 14px;
+    }
+
+    .metric strong {
+      font-size: 20px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .mini-stat {
+      background: rgba(255, 253, 248, .72);
+      border: 1px solid rgba(222, 216, 204, .9);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .review-item {
+      padding: 10px;
+      background: rgba(255, 253, 248, .72);
+      border: 1px solid rgba(222, 216, 204, .9);
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .library-shell {
+      margin-top: 24px;
+      box-shadow: none;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .library-block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 14px;
+    }
+
+    .library-block h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .library-block p,
+    .library-block li {
+      color: #3d3d3d;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 7px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      color: var(--accent-dark);
+      font-size: 12px;
+    }
+
+    .tip-strip {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 0;
+    }
+
+    .tip-strip div {
+      border-left: 3px solid var(--accent);
+      background: #f4efe3;
+      border-radius: 0 8px 8px 0;
+      padding: 9px 10px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .mobile-tabs {
+      display: none;
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
+      background: rgba(235, 229, 216, .96);
+      border-top: 1px solid var(--line);
+      padding: 8px;
+      gap: 8px;
+    }
+
+    @media (max-width: 1050px) {
+      .app {
+        grid-template-columns: 240px minmax(0, 1fr);
+      }
+
+      .inspector {
+        position: static;
+        grid-column: 1 / -1;
+        min-height: auto;
+        max-height: none;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar,
+      .inspector {
+        position: static;
+        min-height: auto;
+        max-height: none;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .blueprint {
+        width: 100%;
+        max-height: 130px;
+      }
+
+      .library-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .sidebar, .inspector, .toolbar, .blueprint { display: none; }
+      .app { display: block; }
+      .main { padding: 0; }
+      .question-shell { box-shadow: none; border-color: #bbb; break-inside: avoid; }
+      .library-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5V5a2 2 0 0 1 2-2h11" />
+            <path d="M6 17h12a2 2 0 0 1 2 2V7" />
+            <path d="M8 7h7M8 11h9M8 15h5" />
+          </svg>
+        </div>
+        <div>
+          <h1>工程英语刷题</h1>
+          <small>期末冲刺交互版</small>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-title">搜索</p>
+        <input class="search-box" id="searchInput" placeholder="搜单词、中文、考点">
+        <div class="tiny-row">
+          <button class="tiny-btn" id="clearSearchBtn">清空搜索</button>
+          <button class="tiny-btn" id="onlyMustBtn">只看必背</button>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-title">练习模式</p>
+        <div class="segmented" id="modeFilters"></div>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-title">题型</p>
+        <div class="segmented" id="typeFilters"></div>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-title">单元</p>
+        <div class="segmented" id="unitFilters"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Vocabulary 20 / Reading 40 / Translation 20 / Writing 20</p>
+          <h2>按考试范围刷题，答完立刻看解释</h2>
+          <p>覆盖 U1 AI、U2 Sustainable Development、U3 Robotics and Automation。单选题自动判分；翻译和作文按关键词自检，并提供参考答案。</p>
+        </div>
+        <svg class="blueprint" viewBox="0 0 360 180" role="img" aria-label="考试结构示意图">
+          <rect x="10" y="18" width="340" height="144" rx="8" fill="#fffdf8" stroke="#0f766e" stroke-width="3"/>
+          <path d="M40 132h280M40 102h280M40 72h280" stroke="#ded8cc" stroke-width="2"/>
+          <path d="M66 132V76M132 132V44M198 132V86M264 132V86" stroke="#0f766e" stroke-width="18" stroke-linecap="round"/>
+          <g fill="#202124" font-family="Arial, sans-serif" font-size="14" font-weight="700">
+            <text x="43" y="154">词汇</text><text x="109" y="154">阅读</text><text x="175" y="154">翻译</text><text x="241" y="154">写作</text>
+          </g>
+          <g fill="#0b5f59" font-family="Arial, sans-serif" font-size="13">
+            <text x="52" y="62">20</text><text x="118" y="31">40</text><text x="184" y="73">20</text><text x="250" y="73">20</text>
+          </g>
+        </svg>
+      </section>
+
+      <div class="toolbar">
+        <button class="primary-btn" id="checkBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+          校验答案
+        </button>
+        <button class="tool-btn" id="nextBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          下一题
+        </button>
+        <button class="tool-btn" id="shuffleBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.4c2.3 0 3.7-.8 5.3-3.1l6.6-9.8C16.8 2.8 18.2 2 20.6 2H22"/><path d="M2 6h1.4c1.7 0 2.9.4 4 1.5"/><path d="M14.8 16.5c1.4 1.1 2.8 1.5 5.8 1.5H22"/></svg>
+          打乱
+        </button>
+        <button class="ghost-btn" id="resetBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/></svg>
+          重置
+        </button>
+        <button class="ghost-btn" id="favoriteBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1z"/></svg>
+          收藏
+        </button>
+        <button class="ghost-btn" id="exportBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          导出
+        </button>
+        <button class="ghost-btn" id="printBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+          打印
+        </button>
+        <button class="ghost-btn" id="mockBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+          模拟考试
+        </button>
+      </div>
+
+      <div class="mock-banner" id="mockBanner">
+        <span id="mockInfo">模拟考试模式</span>
+        <button class="tiny-btn" id="exitMockBtn">退出模拟</button>
+      </div>
+
+      <section class="question-shell" id="questionShell"></section>
+      <section class="question-shell library-shell" id="coverageShell"></section>
+    </main>
+
+    <aside class="inspector">
+      <h2 style="margin:0 0 12px;font-size:20px;">练习状态</h2>
+      <div class="progress-wrap">
+        <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="metric"><span>当前题库</span><strong id="poolCount">0</strong></div>
+      <div class="metric"><span>已作答</span><strong id="answeredCount">0</strong></div>
+      <div class="metric"><span>正确率</span><strong id="accuracy">0%</strong></div>
+      <div class="metric"><span>当前题</span><strong id="position">1</strong></div>
+      <div class="metric"><span>收藏题</span><strong id="favoriteCount">0</strong></div>
+      <div class="metric"><span>连续正确</span><strong id="streakCount">0</strong></div>
+      <div class="mini-stats" id="typeStats"></div>
+
+      <div style="margin-top:22px;">
+        <h3 style="font-size:16px;margin:0 0 8px;">错题本</h3>
+        <div id="wrongList" class="review-list"></div>
+      </div>
+      <div style="margin-top:22px;">
+        <h3 style="font-size:16px;margin:0 0 8px;">快捷键</h3>
+        <div class="tip-strip">
+          <div><strong>1-4</strong> 选择 A-D；<strong>Enter</strong> 校验；<strong>→</strong> 下一题。</div>
+          <div>建议顺序：词汇必背 -> 阅读 Key -> 翻译默写 -> 写作自检。</div>
+          <div>模拟考试为 45 分钟训练模式：20 词汇 + 5 短语 + 10 阅读 + 2 翻译 + 1 写作。</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        id: "v-u1-1", unit: "U1", type: "词汇", mode: "choice",
+        title: "The team engaged in an intense session to _____ innovative solutions.",
+        options: ["distill", "brainstorm", "circumvent", "displace"],
+        answer: 1,
+        explanation: "brainstorm 表示“头脑风暴、集思广益”，常搭配 brainstorm innovative ideas/solutions。",
+        source: "U1 Language focus"
+      },
+      {
+        id: "v-u1-2", unit: "U1", type: "词汇", mode: "choice",
+        title: "The hackers attempted to _____ the firewall.",
+        options: ["circumvent", "complement", "intervene", "simulate"],
+        answer: 0,
+        explanation: "circumvent 表示“规避、绕过”，常用于 circumvent a firewall/problem/rule。",
+        source: "U1 Language focus"
+      },
+      {
+        id: "v-u1-3", unit: "U1", type: "词汇", mode: "choice",
+        title: "AI should _____ human skills rather than replace them.",
+        options: ["obsolete", "complement", "rocket", "distill"],
+        answer: 1,
+        explanation: "complement 表示“补充、增强”。这是 U1 阅读核心观点：AI complements human skills。",
+        source: "U1 Academic glossaries"
+      },
+      {
+        id: "v-u1-4", unit: "U1", type: "词汇", mode: "choice",
+        title: "The rise of e-books has _____ traditional print books in some markets.",
+        options: ["displaced", "included", "intervened", "abstracted"],
+        answer: 0,
+        explanation: "displace 表示“取代、替代”。考场看到“取代岗位/传统方式”优先想到 displace。",
+        source: "U1 Language focus"
+      },
+      {
+        id: "v-u1-5", unit: "U1", type: "词汇", mode: "choice",
+        title: "A short piece of writing containing the main ideas in a document is a(n) _____.",
+        options: ["scenario", "abstract", "simulation", "itinerary"],
+        answer: 1,
+        explanation: "abstract 是“摘要”。scenario 是“情境/方案”，simulation 是“模拟”。",
+        source: "U1 Academic glossaries"
+      },
+      {
+        id: "v-u1-6", unit: "U1", type: "短语", mode: "choice",
+        title: "Early adopters of renewable energy technologies put themselves _____.",
+        options: ["on the cusp of", "ahead of the curve", "at stake", "prone to"],
+        answer: 1,
+        explanation: "ahead of the curve 表示“走在前沿、领先一步”。",
+        source: "U1 phrases"
+      },
+      {
+        id: "v-u1-7", unit: "U1", type: "短语", mode: "choice",
+        title: "The new restaurant _____ when it opened, attracting critics and enthusiasts.",
+        options: ["made a splash", "sank in", "fed into", "came to terms with"],
+        answer: 0,
+        explanation: "make a splash 表示“引起轰动”。",
+        source: "U1 phrases"
+      },
+      {
+        id: "v-u2-1", unit: "U2", type: "词汇", mode: "choice",
+        title: "The _____ of natural resources is a growing concern.",
+        options: ["depletion", "automation", "impartiality", "biometrics"],
+        answer: 0,
+        explanation: "depletion 表示“消耗、枯竭”，常搭配 natural resources。",
+        source: "U2 Language focus"
+      },
+      {
+        id: "v-u2-2", unit: "U2", type: "词汇", mode: "choice",
+        title: "The new policy aims to _____ businesses to adopt sustainable practices.",
+        options: ["underpin", "incentivize", "unlearn", "source"],
+        answer: 1,
+        explanation: "incentivize 表示“激励、刺激”。题干里 businesses to adopt sustainable practices 是典型搭配。",
+        source: "U2 Language focus"
+      },
+      {
+        id: "v-u2-3", unit: "U2", type: "词汇", mode: "choice",
+        title: "The policy is designed to be _____, ensuring benefits for all social groups.",
+        options: ["inclusive", "dire", "textual", "obsolete"],
+        answer: 0,
+        explanation: "inclusive 表示“包容的”，常用于 inclusive development/policy。",
+        source: "U2 Language focus"
+      },
+      {
+        id: "v-u2-4", unit: "U2", type: "词汇", mode: "choice",
+        title: "To strengthen _____, governments and corporations need transparent reporting.",
+        options: ["accountability", "individuality", "instability", "prevalence"],
+        answer: 0,
+        explanation: "accountability 表示“问责、责任”，透明报告机制与 accountability 高度相关。",
+        source: "U2 Language focus"
+      },
+      {
+        id: "v-u2-5", unit: "U2", type: "短语", mode: "choice",
+        title: "After months of negotiation, both parties finally _____ an agreement.",
+        options: ["came to terms with", "went all in on", "bounced ideas off", "made a splash"],
+        answer: 0,
+        explanation: "come to terms with 可表示“达成协议”或“接受现实”。",
+        source: "U2 phrases"
+      },
+      {
+        id: "v-u2-6", unit: "U2", type: "短语", mode: "choice",
+        title: "The research team _____ scientific studies to gather data.",
+        options: ["drew on", "fed into", "sank in", "was prone to"],
+        answer: 0,
+        explanation: "draw on 表示“利用、借鉴”。",
+        source: "U2 phrases"
+      },
+      {
+        id: "v-u2-7", unit: "U2", type: "词汇", mode: "choice",
+        title: "A plan intended to achieve a particular purpose is a _____.",
+        options: ["strategy", "subsidy", "controversy", "constraint"],
+        answer: 0,
+        explanation: "strategy 表示“策略、行动计划”。",
+        source: "U2 Academic glossaries"
+      },
+      {
+        id: "v-u3-1", unit: "U3", type: "词汇", mode: "choice",
+        title: "The factory plans to _____ several robotic arms.",
+        options: ["deploy", "amass", "anthropomorphize", "perceive"],
+        answer: 0,
+        explanation: "deploy 表示“部署、调动”，常搭配 deploy robots/robotic arms。",
+        source: "U3 Language focus"
+      },
+      {
+        id: "v-u3-2", unit: "U3", type: "词汇", mode: "choice",
+        title: "The _____ nature of the task made it ideal for automation.",
+        options: ["repetitive", "indigenous", "textual", "radical"],
+        answer: 0,
+        explanation: "repetitive 表示“重复性的”。重复性任务最适合 automation。",
+        source: "U3 Language focus"
+      },
+      {
+        id: "v-u3-3", unit: "U3", type: "词汇", mode: "choice",
+        title: "The software is designed to _____ risks associated with manual data entry.",
+        options: ["mitigate", "deplete", "rocket", "unlearn"],
+        answer: 0,
+        explanation: "mitigate risks 是高频搭配，表示“缓解/减轻风险”。",
+        source: "U3 Language focus"
+      },
+      {
+        id: "v-u3-4", unit: "U3", type: "词汇", mode: "choice",
+        title: "Some workers may _____ robots, attributing human-like qualities to them.",
+        options: ["anthropomorphize", "automate", "incentivize", "circumvent"],
+        answer: 0,
+        explanation: "anthropomorphize 表示“拟人化”。",
+        source: "U3 Language focus"
+      },
+      {
+        id: "v-u3-5", unit: "U3", type: "短语", mode: "choice",
+        title: "The automotive industry is _____ robotics.",
+        options: ["going all in on", "sinking in", "drawing on", "ahead of the curve"],
+        answer: 0,
+        explanation: "go all in on 表示“全力投入”。这是 U3 Text A 的核心表达。",
+        source: "U3 phrases"
+      },
+      {
+        id: "v-u3-6", unit: "U3", type: "短语", mode: "choice",
+        title: "Legged robots remain _____ instability compared to wheeled systems.",
+        options: ["prone to", "at stake", "on the cusp of", "in terms of"],
+        answer: 0,
+        explanation: "prone to 表示“易于、倾向于”，常接风险或问题。",
+        source: "U3 phrases"
+      },
+      {
+        id: "r-u1-1", unit: "U1", type: "阅读", mode: "choice",
+        title: "What is the primary focus of Workplace AI?",
+        options: ["The potential for AI to replace human workers.", "The ways AI can transform daily work tasks.", "The ethical considerations of AI.", "The historical development of AI."],
+        answer: 1,
+        explanation: "讲义 Key 为 B。文章主旨是 AI 如何改变工作日常，而不是单纯讨论替代人类。",
+        source: "U1 Text A Gist"
+      },
+      {
+        id: "r-u1-2", unit: "U1", type: "阅读", mode: "choice",
+        title: "What role does AI play in enhancing workers' skill sets?",
+        options: ["It replaces workers' skills.", "It makes workers' skills obsolete.", "It complements and supplements workers' skills.", "It competes with workers' skills."],
+        answer: 2,
+        explanation: "讲义 Key 为 C。U1 高分核心句：AI should complement human skills rather than replace them。",
+        source: "U1 Text A"
+      },
+      {
+        id: "r-u1-3", unit: "U1", type: "阅读", mode: "choice",
+        title: "What is the overall tone of Workplace AI?",
+        options: ["Cautiously optimistic.", "Highly skeptical.", "Fearful.", "Indifferent."],
+        answer: 0,
+        explanation: "讲义 Key 为 A。文章承认风险，但主要强调积极潜力和新机会。",
+        source: "U1 Text A"
+      },
+      {
+        id: "r-u1-4", unit: "U1", type: "阅读", mode: "choice",
+        title: "In Spatial intelligence, what does the glass tipping on a table illustrate?",
+        options: ["Prediction and action based on spatial awareness.", "The randomness of human interaction.", "The limits of language models.", "The invention of neural networks."],
+        answer: 0,
+        explanation: "玻璃倾倒例子说明人能理解空间关系、预测轨迹并行动，这正是 spatial intelligence。",
+        source: "U1 Text B"
+      },
+      {
+        id: "r-u1-5", unit: "U1", type: "阅读", mode: "choice",
+        title: "What does spatial intelligence connect?",
+        options: ["Perception and action.", "Privacy and autonomy.", "Finance and policy.", "Recruitment and resumes."],
+        answer: 0,
+        explanation: "Text B 核心定义：spatial intelligence links perception with action。",
+        source: "U1 Text B"
+      },
+      {
+        id: "r-u2-1", unit: "U2", type: "阅读", mode: "choice",
+        title: "What is the main message of Turn eco-anxiety into bold action on nature?",
+        options: ["Maintain the status quo.", "Turn environmental anxiety into positive action.", "Focus only on technology.", "Ignore natural capital."],
+        answer: 1,
+        explanation: "文章标题已经给出主旨：不要停留在 eco-anxiety，要转化为 bold action。",
+        source: "U2 Text A"
+      },
+      {
+        id: "r-u2-2", unit: "U2", type: "阅读", mode: "choice",
+        title: "What does sustainability emphasize in Text B?",
+        options: ["Short-term profit only.", "Long-term viability and intergenerational responsibility.", "Replacing all businesses.", "Avoiding all technology."],
+        answer: 1,
+        explanation: "Sustainability 被定义为 long-term viability，并与 intergenerational ethics 相关。",
+        source: "U2 Text B"
+      },
+      {
+        id: "r-u2-3", unit: "U2", type: "阅读", mode: "choice",
+        title: "Which three dimensions are central to sustainable development?",
+        options: ["Speed, cost, profit.", "Economy, society, environment.", "AI, robots, data.", "Privacy, security, comfort."],
+        answer: 1,
+        explanation: "U2 翻译和写作都强调 economy, society, and environment 三方面协调发展。",
+        source: "U2 Translation/Writing"
+      },
+      {
+        id: "r-u2-4", unit: "U2", type: "阅读", mode: "choice",
+        title: "What should governments and corporations strengthen to support sustainable development?",
+        options: ["Accountability.", "Anthropomorphism.", "Obsolescence.", "Teleoperation only."],
+        answer: 0,
+        explanation: "讲义词汇题和阅读观点都强调 transparent reporting mechanisms and accountability。",
+        source: "U2 Text A"
+      },
+      {
+        id: "r-u3-1", unit: "U3", type: "阅读", mode: "choice",
+        title: "What does “going all in on robotics” imply?",
+        options: ["Reducing reliance on robotics.", "Considering robotics only in the future.", "Exploring robotics in limited areas.", "Fully committing to robotics technology."],
+        answer: 3,
+        explanation: "讲义 Key 为 D。go all in on = 全力投入。",
+        source: "U3 Text A"
+      },
+      {
+        id: "r-u3-2", unit: "U3", type: "阅读", mode: "choice",
+        title: "What do factory workers prioritize when evaluating robots?",
+        options: ["Emotional engagement.", "Anthropomorphic appearance.", "Technical efficiencies and safety.", "Only low price."],
+        answer: 2,
+        explanation: "讲义 Key 为 C。工人更重视效率和安全，而不是机器人像不像人。",
+        source: "U3 Text A"
+      },
+      {
+        id: "r-u3-3", unit: "U3", type: "阅读", mode: "choice",
+        title: "What is the primary use of Spot in a car plant?",
+        options: ["Assembling cars.", "Conducting industrial inspections.", "Cleaning floors.", "Transporting passengers."],
+        answer: 1,
+        explanation: "讲义 Key 为 B。Spot is used for industrial inspections and predictive maintenance data。",
+        source: "U3 Text A"
+      },
+      {
+        id: "r-u3-4", unit: "U3", type: "阅读", mode: "choice",
+        title: "Why does space robotics need greater autonomy?",
+        options: ["Because satellites do not use fuel.", "Because complex servicing operations and communications delays make teleoperation difficult.", "Because robots are always cheaper.", "Because humans cannot design sensors."],
+        answer: 1,
+        explanation: "U3 Text B 第 5 段：complex responses + communications delays make teleoperation impractical。",
+        source: "U3 Text B"
+      },
+      {
+        id: "r-u3-5", unit: "U3", type: "阅读", mode: "choice",
+        title: "What does force control allow robots to do?",
+        options: ["Ignore contact forces.", "Sense and react to contact forces appropriately.", "Only move faster.", "Replace all astronauts immediately."],
+        answer: 1,
+        explanation: "force control = compliant motion control，机器人负责感知并恰当回应接触力。",
+        source: "U3 Text B"
+      },
+      {
+        id: "r-cw-1", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "If a Chinese wisdom passage mentions “harmony between humanity and nature”, which exam theme is it most likely connected with?",
+        options: ["Sustainable development.", "Resume writing.", "Factory inspection only.", "A firewall attack."],
+        answer: 0,
+        explanation: "Chinese wisdom 中的“天人合一/人与自然和谐”最容易与 U2 可持续发展和生态保护连接。",
+        source: "Chinese wisdom strategy"
+      },
+      {
+        id: "r-cw-2", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "Which expression best translates “互利共赢”?",
+        options: ["mutual benefit and win-win cooperation", "machine learning", "resource depletion", "job displacement"],
+        answer: 0,
+        explanation: "互利共赢 = mutual benefit and win-win cooperation，可用于 Chinese wisdom 翻译和写作。",
+        source: "Chinese wisdom strategy"
+      },
+      {
+        id: "t-u1", unit: "U1", type: "翻译", mode: "written",
+        title: "翻译自检：U1 AI",
+        prompt: "人工智能正在以惊人的方式改革现代工作。生成性 AI 利用自然语言处理技术，可以帮助员工撰写求职信和简历，激发创意，甚至在工作场所创作艺术作品。",
+        keywords: ["artificial intelligence", "modern workplace", "generative ai", "natural language processing", "cover letters", "resumes", "creativity"],
+        sample: "Artificial intelligence is transforming the modern workplace in a staggering way. Generative AI, powered by natural language processing technology, assists employees in writing cover letters and resumes, sparking creativity, and even creating art in the workplace.",
+        explanation: "关键词命中越多越稳。注意 generative AI 不能写成 productive AI。",
+        source: "U1 Translation"
+      },
+      {
+        id: "t-u2", unit: "U2", type: "翻译", mode: "written",
+        title: "翻译自检：U2 Sustainable Development",
+        prompt: "可持续发展要求我们在经济、社会和环境三个方面实现协调发展。经济上，要推动绿色增长，提高资源利用效率；社会上，要促进公平与包容。",
+        keywords: ["sustainable development", "coordinated development", "economy", "society", "environment", "green growth", "resource efficiency", "equity", "inclusion"],
+        sample: "Sustainable development calls for coordinated development in three areas: economy, society, and environment. Economically, we need to promote green growth and improve resource efficiency. Socially, we must foster equity and inclusion.",
+        explanation: "U2 最重要的是三维框架：economy, society, environment。公平建议写 equity，包容写 inclusion。",
+        source: "U2 Translation"
+      },
+      {
+        id: "t-u3", unit: "U3", type: "翻译", mode: "written",
+        title: "翻译自检：U3 Robotics",
+        prompt: "机器人技术正在以惊人的速度改变汽车制造业。从协作机器人到人形机器人，自动化技术正在帮助汽车制造商提高效率并应对劳动力短缺。",
+        keywords: ["robotics", "automotive manufacturing industry", "staggering pace", "collaborative robots", "humanoid robots", "automation", "efficiency", "labor shortages"],
+        sample: "Robotics is transforming the automotive manufacturing industry at a staggering pace. From collaborative robots to humanoid robots, automation technology is helping automakers improve efficiency and address labor shortages.",
+        explanation: "automotive manufacturing industry、collaborative robots、humanoid robots 都是高分术语。",
+        source: "U3 Translation"
+      },
+      {
+        id: "w-u1", unit: "U1", type: "写作", mode: "written",
+        title: "作文自检：AI personalization",
+        prompt: "用 200-250 words 写 AI personalization。至少覆盖：便利、隐私、echo chamber、responsible use。",
+        keywords: ["personalized technology", "convenience", "privacy", "echo chamber", "autonomy", "responsibly", "human judgment"],
+        sample: "A strong answer should discuss both benefits and risks: tailored content and efficient decision-making are advantages, while privacy concerns, echo chambers, and loss of autonomy are challenges. End with responsible and human-centered AI.",
+        explanation: "作文无法精确自动判分，这里按关键词和结构自检。命中 5 个以上关键词基本方向正确。",
+        source: "Writing U1"
+      },
+      {
+        id: "w-u2", unit: "U2", type: "写作", mode: "written",
+        title: "作文自检：Sustainable development",
+        prompt: "用 200-250 words 写 sustainable development。至少覆盖 economy, society, environment 三方面。",
+        keywords: ["sustainable development", "economy", "society", "environment", "green growth", "equity", "inclusion", "emissions", "future generations"],
+        sample: "A strong answer should balance economic, social, and environmental dimensions: green growth and resource efficiency, equity and inclusion, ecosystem protection and emission reduction.",
+        explanation: "U2 作文要写三维框架，不能只写环保。",
+        source: "Writing U2"
+      },
+      {
+        id: "w-u3", unit: "U3", type: "写作", mode: "written",
+        title: "作文自检：Robotics and automation",
+        prompt: "用 200-250 words 写 robotics and automation。至少覆盖效率、劳动力短缺、岗位取代、人机协作。",
+        keywords: ["robotics", "automation", "efficiency", "labor shortages", "repetitive tasks", "displace", "human-centered", "lifelong learning"],
+        sample: "A strong answer should explain how robots improve efficiency and address labor shortages, then discuss job displacement and the need for human-centered automation and lifelong learning.",
+        explanation: "U3 作文要平衡：效率提升 + 就业/伦理风险 + 技能升级。",
+        source: "Writing U3"
+      },
+      {
+        id: "cw-u1-r1", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U1 Chinese wisdom: The Chinese government has sent medical workers to more than 70 countries since the 1960s.",
+        options: ["True", "False"],
+        answer: 0,
+        explanation: "原文提到 China has sent medical workers to more than 70 countries since the 1960s.",
+        source: "U1 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u1-r2", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U1 Chinese wisdom: The use of insecticide-treated nets to prevent malaria was first recommended by WHO and then promoted by China.",
+        options: ["True", "False"],
+        answer: 1,
+        explanation: "原文说中国早在 1980s 就 pioneered the use of insecticide-treated nets，早于 WHO 推荐。",
+        source: "U1 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u1-r3", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U1 Chinese wisdom: What is one major contribution China has made to global health governance?",
+        options: ["Providing medical support to other countries.", "Reducing all international trade.", "Replacing WHO.", "Stopping all vaccine cooperation."],
+        answer: 0,
+        explanation: "阅读问答答案概括为三点：医疗援助、帮助建设公共卫生系统、分享健康治理经验。",
+        source: "U1 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u2-r1", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U2 Chinese wisdom: Why is Shibadong village cited at the beginning of the passage?",
+        options: ["To describe scenic villages.", "To discuss ethnic languages.", "To highlight China's targeted poverty alleviation strategy.", "To criticize rural tourism."],
+        answer: 2,
+        explanation: "Shibadong is a shining example of targeted poverty alleviation.",
+        source: "U2 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u2-r2", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U2 Chinese wisdom: Which one is NOT mentioned as a poverty alleviation measure?",
+        options: ["Creating more job opportunities.", "Protecting ecosystems and the environment.", "Providing more education and training.", "Relocating poor people to cities."],
+        answer: 3,
+        explanation: "原文是 relocating poor people from inhospitable areas to more habitable regions，不是搬到城市。",
+        source: "U2 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u2-r3", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U2 Chinese wisdom: What is the priority of the government in reducing poverty?",
+        options: ["Building advanced infrastructure.", "Developing industries suitable for local conditions.", "Reducing transportation costs only.", "Constructing new houses and hospitals only."],
+        answer: 1,
+        explanation: "原文说 government has prioritized the development of industries suitable for local conditions and market demand.",
+        source: "U2 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u2-r4", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U2 Chinese wisdom: Which statement is TRUE about China's achievements in poverty alleviation?",
+        options: ["China has reduced poverty both at home and abroad.", "China's experience can be fully applied to any country.", "China only invested in healthcare.", "China lifted only 70 million people out of poverty."],
+        answer: 0,
+        explanation: "原文强调 China has benefited its own citizens and contributed to global poverty reduction.",
+        source: "U2 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u3-r1", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U3 Chinese wisdom: China has committed to becoming carbon neutral by 2030.",
+        options: ["True", "False"],
+        answer: 1,
+        explanation: "原文是 peak carbon emissions by 2030 and become carbon neutral by 2060.",
+        source: "U3 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u3-r2", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U3 Chinese wisdom: China managed to slash its carbon emissions per unit of GDP by 34.4% between 2012 and 2022.",
+        options: ["True", "False"],
+        answer: 0,
+        explanation: "这是原文数据，判断为 True。",
+        source: "U3 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u3-r3", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U3 Chinese wisdom: What is China's Emissions Trading System designed to encourage?",
+        options: ["More fossil fuel use.", "Companies reducing carbon emissions.", "A ban on renewable energy.", "Higher steel capacity."],
+        answer: 1,
+        explanation: "ETS encourages companies to reduce carbon emissions and improve energy efficiency.",
+        source: "U3 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-u3-r4", unit: "Chinese wisdom", type: "阅读", mode: "choice",
+        title: "U3 Chinese wisdom: What has China done globally to combat climate change?",
+        options: ["Participated in international negotiations and shared clean energy technologies.", "Withdrawn from major climate agreements.", "Supported only coal power plants.", "Stopped Belt and Road green cooperation."],
+        answer: 0,
+        explanation: "原文提到 international negotiations, Kyoto Protocol, Paris Agreement, clean energy technology sharing, and BRI Green Development.",
+        source: "U3 Chinese wisdom Reading"
+      },
+      {
+        id: "cw-t-u1", unit: "Chinese wisdom", type: "翻译", mode: "written",
+        title: "Chinese wisdom 翻译自检：U1 Global health",
+        prompt: "病毒没有国界，疫情不分种族。任何国家都不能置身其外，独善其身。全人类只有共同努力，才能战而胜之。在应对这场全球公共卫生危机的过程中，构建人类命运共同体的迫切性和重要性更加凸显。",
+        keywords: ["viruses know no borders", "epidemics", "no country", "cooperating", "global public health crisis", "community with a shared future"],
+        sample: "Viruses know no borders, nor do epidemics discriminate between races. No country stands apart or is exempt. Only by cooperating and responding together can the human society overcome this pandemic. In responding to this global public health crisis, there is all the more urgency and importance to building a community with a shared future for mankind.",
+        explanation: "核心术语：viruses know no borders; no country stands apart; community with a shared future for mankind.",
+        source: "U1 Chinese wisdom Translation"
+      },
+      {
+        id: "cw-t-u2", unit: "Chinese wisdom", type: "翻译", mode: "written",
+        title: "Chinese wisdom 翻译自检：U2 Poverty",
+        prompt: "贫困是全世界共同面临的挑战。中国消除极端贫困是人类历史上的一个里程碑，为全球脱贫事业作出了重要贡献。这一成就也表明，只要有坚定的意志和决心，并采取切实行动，就能在攻克贫困和实现共同富裕方面取得稳步进展。",
+        keywords: ["poverty", "common challenge", "extreme poverty", "milestone", "global poverty alleviation", "strong will", "practical action", "common prosperity"],
+        sample: "Poverty is a common challenge faced by the whole world. The elimination of extreme poverty in China is a milestone in the history of mankind, making an important contribution to the cause of global poverty alleviation. This achievement also reveals that, with strong will and determination, as well as practical action, one can make steady progress toward overcoming poverty and realizing common prosperity.",
+        explanation: "核心术语：extreme poverty; milestone; global poverty alleviation; common prosperity.",
+        source: "U2 Chinese wisdom Translation"
+      },
+      {
+        id: "cw-t-u3", unit: "Chinese wisdom", type: "翻译", mode: "written",
+        title: "Chinese wisdom 翻译自检：U3 Climate change",
+        prompt: "中国贯彻新发展理念，将应对气候变化摆在国家治理更加突出的位置。作为负责任的国家，中国积极推动共建公平合理、合作共赢的全球气候治理体系，为应对气候变化贡献中国智慧中国力量。",
+        keywords: ["new development philosophy", "climate change", "state governance", "responsible country", "global climate governance system", "fair", "cooperative", "Chinese wisdom"],
+        sample: "Committed to the new development philosophy, China has made the response to climate change a higher priority in state governance. As a responsible country, China actively promotes the building of a global climate governance system that is fair, rational, cooperative and beneficial to all, and makes its due contribution to tackling climate change using its greatest strengths and most effective solutions.",
+        explanation: "核心术语：new development philosophy; global climate governance system; fair, rational, cooperative and beneficial to all.",
+        source: "U3 Chinese wisdom Translation"
+      }
+    ];
+
+    const wordBank = [
+      { unit: "U1", category: "词汇", term: "generative AI", zh: "生成式人工智能", usage: "generate text / ideas / images", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "natural language processing", zh: "自然语言处理", usage: "powered by NLP", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "machine learning", zh: "机器学习", usage: "respond to prompts; learn from data", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "prompt", zh: "提示词", usage: "given a prompt", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "brainstorm", zh: "头脑风暴；集思广益", usage: "brainstorm innovative solutions", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "circumvent", zh: "规避；绕过", usage: "circumvent a firewall / problem", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "displace", zh: "取代；替代", usage: "displace workers / traditional jobs", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "distill", zh: "提炼；浓缩", usage: "distill complex topics", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "impartiality", zh: "公正；客观", usage: "interpret data with impartiality", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "imperative", zh: "必要的；紧迫的", usage: "it is imperative that ...", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "inclusion", zh: "包容", usage: "promote inclusion", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "inconceivable", zh: "难以想象的；无法相信的", usage: "it seemed inconceivable that ...", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "itinerary", zh: "行程", usage: "plan an itinerary", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "myriad", zh: "无数的", usage: "across myriad fields", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "obsolete", zh: "过时的", usage: "become obsolete", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "prevalence", zh: "普遍；流行", usage: "the prevalence of social media", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "proliferation", zh: "激增；扩散", usage: "proliferation of AI", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "rocket", zh: "飙升；迅速上升", usage: "rocket generative AI onto the radar", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "staggering", zh: "惊人的", usage: "at a staggering pace / in a staggering way", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "complement", zh: "补充；补足；增强", usage: "complement human skills", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "abstract", zh: "摘要", usage: "write an abstract", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "academia", zh: "学术界", usage: "in academia", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "diversity", zh: "多样性", usage: "diverse perspectives / diversity", priority: "必背" },
+      { unit: "U1", category: "词汇", term: "intervene", zh: "干预；介入", usage: "governments intervene", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "simulation", zh: "模拟；仿真", usage: "simulation environment", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "scenario", zh: "情境；方案；设想", usage: "future scenario", priority: "熟悉" },
+      { unit: "U1", category: "词汇", term: "textual", zh: "文本的；篇章的", usage: "textual evidence", priority: "熟悉" },
+      { unit: "U1", category: "短语", term: "ahead of the curve", zh: "走在前沿；领先一步", usage: "Early adopters are ahead of the curve.", priority: "必背" },
+      { unit: "U1", category: "短语", term: "a swath of", zh: "大量；一大片", usage: "affect a swath of businesses", priority: "必背" },
+      { unit: "U1", category: "短语", term: "bounce ideas off", zh: "与某人交流想法", usage: "bounce ideas off a mentor", priority: "必背" },
+      { unit: "U1", category: "短语", term: "chime with", zh: "与……一致", usage: "The strategy chimes with consumer trends.", priority: "必背" },
+      { unit: "U1", category: "短语", term: "make a splash", zh: "引起轰动", usage: "The new tool made a splash.", priority: "必背" },
+      { unit: "U1", category: "短语", term: "step outside of the box", zh: "跳出框架", usage: "step outside of the box and explore alternatives", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "sustainable development", zh: "可持续发展", usage: "economic, social and environmental development", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "sustainability", zh: "可持续性", usage: "long-term viability", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "viability", zh: "可行性；生存能力", usage: "put viability at risk", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "incentivize", zh: "激励；刺激", usage: "incentivize businesses to adopt practices", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "dire", zh: "严重的；可怕的", usage: "dire consequences / warnings", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "source", zh: "采购；获得", usage: "source materials locally", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "framework", zh: "框架", usage: "establish a framework", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "depletion", zh: "消耗；枯竭", usage: "depletion of natural resources", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "grassroots", zh: "草根的；基层的", usage: "grassroots efforts / level", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "underpin", zh: "支撑；构成基础", usage: "underpin sustainable policies", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "indigenous", zh: "土著的；本土的", usage: "indigenous communities", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "compromise", zh: "损害；妥协", usage: "compromise reputation / sustainability", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "unequivocal", zh: "明确的；毫不含糊的", usage: "unequivocal consensus", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "inclusive", zh: "包容的", usage: "inclusive development / policy", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "unlearn", zh: "抛弃旧观念；故意忘却", usage: "unlearn harmful practices", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "accountability", zh: "问责；责任", usage: "strengthen accountability", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "systemically", zh: "系统地", usage: "systemically address challenges", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "acknowledge", zh: "承认；认可", usage: "acknowledge contributions / truth", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "alternative", zh: "替代方案；可供选择的事物", usage: "find an alternative", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "constraint", zh: "限制；约束", usage: "economic constraints", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "contemporary", zh: "当代的", usage: "contemporary society", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "controversy", zh: "争议；论战", usage: "a growing controversy", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "corporate", zh: "公司的", usage: "corporate social responsibility", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "implication", zh: "影响；后果", usage: "policy implications", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "initiative", zh: "倡议；措施", usage: "launch an initiative", priority: "必背" },
+      { unit: "U2", category: "词汇", term: "radical", zh: "根本的；激进的", usage: "radical changes", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "subsidy", zh: "补贴；补助金", usage: "government subsidy", priority: "熟悉" },
+      { unit: "U2", category: "词汇", term: "strategy", zh: "策略；行动计划", usage: "a strategy to address climate change", priority: "必背" },
+      { unit: "U2", category: "短语", term: "come to terms with", zh: "接受现实；达成协议", usage: "come to terms with natural capital depletion", priority: "必背" },
+      { unit: "U2", category: "短语", term: "draw on", zh: "利用；借鉴", usage: "draw on scientific studies", priority: "必背" },
+      { unit: "U2", category: "短语", term: "feed into", zh: "对……产生影响", usage: "green technology feeds into economic growth", priority: "必背" },
+      { unit: "U2", category: "短语", term: "on the cusp of", zh: "处于……边缘；即将发生", usage: "be on the cusp of a breakthrough", priority: "必背" },
+      { unit: "U2", category: "短语", term: "sink in", zh: "被充分理解；逐渐被领会", usage: "the significance is sinking in", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "robotics", zh: "机器人技术", usage: "robotics transforms manufacturing", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "automation", zh: "自动化", usage: "automate production lines", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "humanoid", zh: "人形机器人；似人形的", usage: "humanoid robots", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "collaborative", zh: "协作的", usage: "collaborative robots", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "deploy", zh: "部署；调动", usage: "deploy robotic arms", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "repetitive", zh: "重复性的", usage: "repetitive tasks", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "maintenance", zh: "维护；保养", usage: "predictive / regular maintenance", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "dexterous", zh: "灵巧的", usage: "dexterous robotic arms", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "instability", zh: "不稳定", usage: "inherent instability", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "actuator", zh: "执行器", usage: "actuator in a robot's arm", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "biometrics", zh: "生物识别", usage: "multimodal biometrics", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "anthropomorphize", zh: "拟人化", usage: "anthropomorphize robots", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "mitigate", zh: "减轻；缓解", usage: "mitigate risks", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "debut", zh: "首次亮相", usage: "the robot debuted", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "amass", zh: "积累；收集", usage: "amass data", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "approach", zh: "方法；方式", usage: "a new approach", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "assembly", zh: "装配；组装", usage: "assembly process", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "circumstance", zh: "情况；环境", usage: "under different circumstances", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "conference", zh: "会议", usage: "tech conference", priority: "了解" },
+      { unit: "U3", category: "词汇", term: "diverse", zh: "多样的", usage: "diverse datasets / tasks", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "dynamics", zh: "动态；相互作用", usage: "market dynamics", priority: "熟悉" },
+      { unit: "U3", category: "词汇", term: "perceive", zh: "感知；理解", usage: "perceive surroundings", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "potential", zh: "潜在的；可能的", usage: "potential benefits", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "transition", zh: "过渡；转变", usage: "transition to automation", priority: "必背" },
+      { unit: "U3", category: "词汇", term: "strategy", zh: "策略；行动计划", usage: "automation strategy", priority: "必背" },
+      { unit: "U3", category: "短语", term: "go all in on", zh: "全力投入", usage: "The auto industry is going all in on robotics.", priority: "必背" },
+      { unit: "U3", category: "短语", term: "prone to", zh: "易于；倾向于", usage: "legged robots are prone to instability", priority: "必背" },
+      { unit: "U3", category: "短语", term: "be at stake", zh: "处于危险中；成败攸关", usage: "business success might be at stake", priority: "必背" },
+      { unit: "U3", category: "短语", term: "collaborate with", zh: "与……合作", usage: "collaborate with robotics companies", priority: "必背" },
+      { unit: "U3", category: "短语", term: "lightning rod", zh: "争议焦点", usage: "robots are a lightning rod in job debates", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "Chinese wisdom", zh: "中国智慧", usage: "Chinese wisdom emphasizes harmony and responsibility.", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "traditional Chinese culture", zh: "传统中国文化", usage: "draw on traditional Chinese culture", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "harmonious coexistence", zh: "和谐共生", usage: "promote harmonious coexistence", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "harmony between humanity and nature", zh: "天人合一；人与自然和谐", usage: "harmony between humanity and nature", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "people-centered approach", zh: "以人为本的方法", usage: "adopt a people-centered approach", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "common development", zh: "共同发展", usage: "pursue common development", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "mutual benefit and win-win cooperation", zh: "互利共赢", usage: "mutual benefit and win-win cooperation", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "a community with a shared future", zh: "命运共同体", usage: "build a community with a shared future", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "the concept of sustainable development", zh: "可持续发展理念", usage: "the concept of sustainable development", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "remain relevant to modern society", zh: "对现代社会仍有意义", usage: "remain relevant to modern society", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "imperative", zh: "紧急的；极重要的", usage: "It is imperative to build public confidence in vaccines.", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "committed", zh: "坚定的；尽心尽力的", usage: "be committed to global health security", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "initiate", zh: "开始实施；发起", usage: "initiate a public health project", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "safeguard", zh: "保护；保卫", usage: "safeguard children's health", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "certify", zh: "证明；证实；认证", usage: "be certified as malaria-free", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "testament", zh: "证据；证明", usage: "a testament to China's success", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "pioneer", zh: "开创；倡导", usage: "pioneer the use of insecticide-treated nets", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "prompt", zh: "迅速的；及时的", usage: "prompt diagnosis and follow-up", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "skyrocket", zh: "急升；激增", usage: "per capita income skyrocketed", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "intense", zh: "强有力的；激烈的", usage: "intense economic development measures", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "habitable", zh: "适宜居住的", usage: "more habitable regions", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "subsidy", zh: "补贴；补助金", usage: "housing, healthcare and education subsidies", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "relentless", zh: "坚决的；不懈的", usage: "relentless efforts against poverty", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "align", zh: "使一致；使结合", usage: "align the BRI with the 2030 Agenda", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "underscore", zh: "强调", usage: "underscore China's commitment", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "insight", zh: "深入了解；深刻见解", usage: "offer valuable insights", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "pledge", zh: "发誓；保证；承诺", usage: "pledge to peak carbon emissions", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "slash", zh: "大幅削减", usage: "slash carbon emissions", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "curb", zh: "控制；抑制；约束", usage: "curb the use of fossil fuels", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "capacity", zh: "容量；能力；装机容量", usage: "renewable energy capacity", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "allocate", zh: "分配；配给", usage: "allocate carbon emission quotas", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "allowance", zh: "允许量；限额；配额", usage: "carbon emission allowances", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "constructive", zh: "建设性的；积极的", usage: "play a constructive role", priority: "必背" },
+      { unit: "Chinese wisdom", category: "词汇", term: "dedication", zh: "奉献；全身心投入", usage: "demonstrate China's dedication", priority: "必背" }
+    ];
+
+    function buildWordBankQuestions() {
+      return wordBank.map((item, index) => {
+        const distractors = wordBank
+          .filter((other, otherIndex) => otherIndex !== index && other.category === item.category)
+          .slice(index % 7, index % 7 + 12);
+        const options = [item.zh, ...distractors.map(other => other.zh)]
+          .filter((value, pos, arr) => arr.indexOf(value) === pos)
+          .slice(0, 4);
+        while (options.length < 4) {
+          const fallback = wordBank[(index + options.length + 3) % wordBank.length].zh;
+          if (!options.includes(fallback)) options.push(fallback);
+        }
+        const shift = index % 4;
+        const ordered = options.slice(shift).concat(options.slice(0, shift));
+        return {
+          id: `bank-${index}`,
+          unit: item.unit,
+          type: item.category,
+          mode: "choice",
+          title: `全量词库：${item.term} 的中文/考点是？`,
+          options: ordered,
+          answer: ordered.indexOf(item.zh),
+          explanation: `${item.term}: ${item.zh}。搭配/例句：${item.usage}。优先级：${item.priority}。`,
+          source: "全量词库"
+        };
+      });
+    }
+
+    quizData.push(...buildWordBankQuestions());
+
+    const modeLabels = ["全部题", "未做题", "错题", "收藏"];
+    const typeLabels = ["全部", "词汇", "短语", "阅读", "翻译", "写作"];
+    const unitLabels = ["全部", "U1", "U2", "U3", "Chinese wisdom"];
+    const letters = ["A", "B", "C", "D"];
+
+    let state = {
+      type: "全部",
+      unit: "全部",
+      mode: "全部题",
+      search: "",
+      onlyMust: false,
+      order: quizData.map((_, index) => index),
+      current: 0,
+      selected: null,
+      written: "",
+      answered: {},
+      wrong: [],
+      favorites: [],
+      streak: 0,
+      bestStreak: 0,
+      mockIds: [],
+      mockEndsAt: null,
+      mockTimer: null
+    };
+
+    const els = {
+      shell: document.getElementById("questionShell"),
+      searchInput: document.getElementById("searchInput"),
+      clearSearchBtn: document.getElementById("clearSearchBtn"),
+      onlyMustBtn: document.getElementById("onlyMustBtn"),
+      modeFilters: document.getElementById("modeFilters"),
+      typeFilters: document.getElementById("typeFilters"),
+      unitFilters: document.getElementById("unitFilters"),
+      checkBtn: document.getElementById("checkBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      shuffleBtn: document.getElementById("shuffleBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      favoriteBtn: document.getElementById("favoriteBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      printBtn: document.getElementById("printBtn"),
+      mockBtn: document.getElementById("mockBtn"),
+      mockBanner: document.getElementById("mockBanner"),
+      mockInfo: document.getElementById("mockInfo"),
+      exitMockBtn: document.getElementById("exitMockBtn"),
+      coverageShell: document.getElementById("coverageShell"),
+      poolCount: document.getElementById("poolCount"),
+      answeredCount: document.getElementById("answeredCount"),
+      accuracy: document.getElementById("accuracy"),
+      position: document.getElementById("position"),
+      favoriteCount: document.getElementById("favoriteCount"),
+      streakCount: document.getElementById("streakCount"),
+      typeStats: document.getElementById("typeStats"),
+      progressFill: document.getElementById("progressFill"),
+      wrongList: document.getElementById("wrongList")
+    };
+
+    const coverageData = {
+      exam: [
+        ["Vocabulary and Terms", "20 分", "U1-U3 术语、重点词汇、学术词汇；部分改编自课后词汇题；单选"],
+        ["Reading Comprehension", "40 分", "4 篇阅读；2 篇课内，2 篇课外 CET-6 难度；单选"],
+        ["Translation", "20 分", "U1-U3 单元翻译练习 + Chinese wisdom 翻译练习；题目可能略改编"],
+        ["Writing", "20 分", "U1-U3 单元主题相关；200-250 words"]
+      ],
+      readingKeys: [
+        ["U1 Text A Workplace AI", "Gist: BBCBA; Details: BBBCD ABBCA", "transform workday; complement skills; cautiously optimistic"],
+        ["U1 Text B Spatial intelligence", "ACBABBD", "perception + action; glass tipping; healthcare extra eyes; digital Cambrian explosion"],
+        ["U2 Text A Eco-anxiety", "Gist: BDCBA; Details: BCBCD BABBB", "natural capital; bold action; new economic model; dual carbon targets"],
+        ["U2 Text B Sustainability", "BBCCCDB", "definitions; intergenerational ethics; triple bottom line; corporate sustainability"],
+        ["U3 Text A Auto robotics", "Gist: BBBCA; Details: DCABB ABBCB", "going all in; diverse tasks; legged robots; Spot; job security concern"],
+        ["U3 Text B Space robotics", "BBCCCB（依据原文推断）", "refueling urgency; communication delays; supervisory commands; force control; instability"],
+        ["Chinese wisdom U1 Global health", "T/F: FTTTF; key ideas: medical support, public health systems, malaria-free, shared future", "China contributes through medical aid, health systems, governance experience, and anti-pandemic cooperation"],
+        ["Chinese wisdom U2 Poverty", "MC: CDBBA; key ideas: Shibadong, targeted poverty alleviation, local industries, BRI, global poverty reduction", "China eliminated extreme poverty and contributed over 70% of global poverty reduction over about 40 years"],
+        ["Chinese wisdom U3 Climate change", "T/F: FTFTF; key ideas: carbon neutrality 2060, ETS, renewable energy, global climate governance", "China reduces emissions through industrial/energy transformation, ecosystems, ETS, and international cooperation"]
+      ],
+      translations: [
+        ["U1 AI", "Artificial intelligence is transforming the modern workplace in a staggering way. Generative AI, powered by natural language processing technology, assists employees in writing cover letters and resumes, sparking creativity, and even creating art in the workplace. Experts believe that this technology can not only increase work efficiency but also empower employees to expand their thinking and generate innovative ideas, thus having a positive impact on work and employment."],
+        ["U2 Sustainable Development", "Sustainable development calls for coordinated development in three areas: economy, society, and environment. Economically, we need to promote green growth and improve resource efficiency. Socially, we must foster equity and inclusion, ensuring everyone can benefit from development. Environmentally, we should protect ecosystems and reduce pollution and greenhouse gas emissions. Through international cooperation and policy innovation, we can create a more prosperous, fair, and sustainable world for future generations."],
+        ["U3 Robotics", "Robotics is transforming the automotive manufacturing industry at a staggering pace. From collaborative robots to humanoid robots, automation technology is helping automakers improve efficiency and address labor shortages. Future robots will not only perform repetitive tasks but also execute a variety of tasks based on different conditions in the plant environment. Although robots may displace some jobs, they will create new employment opportunities and drive the industry toward a more sustainable future."],
+        ["Chinese wisdom U1 Global health", "Viruses know no borders, nor do epidemics discriminate between races. No country stands apart or is exempt. Only by cooperating and responding together can the human society overcome this pandemic. In responding to this global public health crisis, there is all the more urgency and importance to building a community with a shared future for mankind."],
+        ["Chinese wisdom U2 Poverty", "Poverty is a common challenge faced by the whole world. The elimination of extreme poverty in China is a milestone in the history of mankind, making an important contribution to the cause of global poverty alleviation. This achievement also reveals that, with strong will and determination, as well as practical action, one can make steady progress toward overcoming poverty and realizing common prosperity."],
+        ["Chinese wisdom U3 Climate change", "Committed to the new development philosophy, China has made the response to climate change a higher priority in state governance. As a responsible country, China actively promotes the building of a global climate governance system that is fair, rational, cooperative and beneficial to all, and makes its due contribution to tackling climate change using its greatest strengths and most effective solutions."]
+      ],
+      writing: [
+        ["AI personalization", "benefits: tailored content, improved convenience, efficient decision-making; challenges: privacy concerns, echo chamber effect, loss of autonomy"],
+        ["Sustainable development", "three dimensions: economy, society, environment; keywords: green growth, resource efficiency, equity, inclusion, ecosystems, emissions"],
+        ["Robotics and automation", "benefits: efficiency, labor shortages, repetitive tasks; challenges: job displacement, inequality, safety; solution: human-centered automation and lifelong learning"],
+        ["Chinese wisdom", "global health: community with a shared future; poverty: common prosperity; climate: harmony between man and nature and global climate governance"]
+      ]
+    };
+
+    function getPool() {
+      return state.order
+        .map(index => quizData[index])
+        .filter(q => !state.mockIds.length || state.mockIds.includes(q.id))
+        .filter(q => (state.type === "全部" || q.type === state.type) && (state.unit === "全部" || q.unit === state.unit))
+        .filter(q => {
+          if (state.mode === "未做题") return !state.answered[q.id];
+          if (state.mode === "错题") return state.wrong.some(item => item.id === q.id);
+          if (state.mode === "收藏") return state.favorites.includes(q.id);
+          return true;
+        })
+        .filter(q => {
+          if (!state.search) return true;
+          const blob = `${q.title || ""} ${q.prompt || ""} ${q.source || ""} ${q.explanation || ""} ${(q.options || []).join(" ")}`.toLowerCase();
+          return blob.includes(state.search.toLowerCase());
+        })
+        .filter(q => {
+          if (!state.onlyMust) return true;
+          const item = q.id.startsWith("bank-") ? wordBank[Number(q.id.replace("bank-", ""))] : null;
+          return item ? item.priority === "必背" : true;
+        });
+    }
+
+    function currentQuestion() {
+      const pool = getPool();
+      if (!pool.length) return null;
+      if (state.current >= pool.length) state.current = 0;
+      return pool[state.current];
+    }
+
+    function renderFilters() {
+      els.searchInput.value = state.search;
+      els.onlyMustBtn.textContent = state.onlyMust ? "显示全部" : "只看必背";
+      els.modeFilters.innerHTML = modeLabels.map(label => {
+        const count = label === "全部题" ? quizData.length
+          : label === "未做题" ? quizData.filter(q => !state.answered[q.id]).length
+          : label === "错题" ? state.wrong.length
+          : state.favorites.length;
+        return `<button class="filter-btn ${state.mode === label ? "active" : ""}" data-filter-mode="${label}"><span>${label}</span><span class="count">${count}</span></button>`;
+      }).join("");
+      els.typeFilters.innerHTML = typeLabels.map(label => {
+        const count = label === "全部" ? quizData.length : quizData.filter(q => q.type === label).length;
+        return `<button class="filter-btn ${state.type === label ? "active" : ""}" data-filter-type="${label}"><span>${label}</span><span class="count">${count}</span></button>`;
+      }).join("");
+      els.unitFilters.innerHTML = unitLabels.map(label => {
+        const count = label === "全部" ? quizData.length : quizData.filter(q => q.unit === label).length;
+        return `<button class="filter-btn ${state.unit === label ? "active" : ""}" data-filter-unit="${label}"><span>${label}</span><span class="count">${count}</span></button>`;
+      }).join("");
+
+      document.querySelectorAll("[data-filter-mode]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.mode = btn.dataset.filterMode;
+          state.current = 0;
+          state.selected = null;
+          state.written = "";
+          render();
+        });
+      });
+      renderMockBanner();
+      document.querySelectorAll("[data-filter-type]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.type = btn.dataset.filterType;
+          state.current = 0;
+          state.selected = null;
+          state.written = "";
+          render();
+        });
+      });
+      document.querySelectorAll("[data-filter-unit]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.unit = btn.dataset.filterUnit;
+          state.current = 0;
+          state.selected = null;
+          state.written = "";
+          render();
+        });
+      });
+    }
+
+    function renderQuestion() {
+      const q = currentQuestion();
+      if (!q) {
+        els.shell.innerHTML = `<p class="empty">当前筛选没有题目。换一个题型或单元试试。</p>`;
+        els.favoriteBtn.innerHTML = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1z"/></svg>收藏`;
+        return;
+      }
+
+      const record = state.answered[q.id];
+      const isFavorite = state.favorites.includes(q.id);
+      els.favoriteBtn.innerHTML = `<svg class="icon" viewBox="0 0 24 24" fill="${isFavorite ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1z"/></svg>${isFavorite ? "取消收藏" : "收藏"}`;
+      const meta = `
+        <div class="q-meta">
+          <span class="tag">${q.unit}</span>
+          <span class="tag secondary">${q.type}</span>
+          <span class="tag secondary">${q.source}</span>
+          ${isFavorite ? '<span class="tag favorite">已收藏</span>' : ''}
+        </div>
+      `;
+
+      if (q.mode === "choice") {
+        els.shell.innerHTML = `
+          ${meta}
+          <h3 class="question-title">${escapeHtml(q.title)}</h3>
+          <div class="options">
+            ${q.options.map((option, index) => {
+              const isSelected = state.selected === index;
+              const show = Boolean(record);
+              const cls = show && index === q.answer ? "correct" : show && isSelected && index !== q.answer ? "wrong" : "";
+              return `<button class="option ${cls}" data-option="${index}">
+                <span class="letter">${letters[index]}</span>
+                <span>${escapeHtml(option)}</span>
+              </button>`;
+            }).join("")}
+          </div>
+          ${feedbackHtml(q, record)}
+        `;
+        document.querySelectorAll("[data-option]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (state.answered[q.id]) return;
+            state.selected = Number(btn.dataset.option);
+            renderQuestion();
+          });
+        });
+        if (state.selected !== null && !record) {
+          const selectedButton = document.querySelector(`[data-option="${state.selected}"]`);
+          if (selectedButton) selectedButton.style.borderColor = "var(--accent)";
+        }
+      } else {
+        els.shell.innerHTML = `
+          ${meta}
+          <h3 class="question-title">${escapeHtml(q.title)}</h3>
+          <p class="prompt">${escapeHtml(q.prompt)}</p>
+          <textarea class="written-area" id="writtenInput" placeholder="在这里输入你的答案。点击“校验答案”后会检查关键词，并显示参考答案。">${escapeHtml(state.written)}</textarea>
+          <div class="keyword-grid" id="keywordGrid">
+            ${q.keywords.map(k => `<span class="keyword">${escapeHtml(k)}</span>`).join("")}
+          </div>
+          <div class="tip-strip">
+            <div>自检规则：关键词命中 60% 以上算方向正确；考试时还要检查语法、术语和段落完整度。</div>
+          </div>
+          ${feedbackHtml(q, record)}
+        `;
+        const input = document.getElementById("writtenInput");
+        input.addEventListener("input", () => {
+          state.written = input.value;
+          updateKeywordPreview(q, input.value);
+        });
+        updateKeywordPreview(q, state.written);
+      }
+    }
+
+    function feedbackHtml(q, record) {
+      if (!record) return `<div class="feedback" id="feedback"></div>`;
+      const status = record.correct ? "回答正确" : q.mode === "written" ? `关键词命中 ${record.hits}/${q.keywords.length}` : "回答错误";
+      const extra = q.mode === "written" && record.missing?.length
+        ? `<p><strong>还缺：</strong>${record.missing.map(escapeHtml).join("；")}</p>`
+        : "";
+      return `
+        <div class="feedback show" id="feedback">
+          <h3>${status}</h3>
+          <p>${escapeHtml(q.explanation)}</p>
+          ${extra}
+          <div class="answer-box">${q.mode === "choice" ? `正确答案：${letters[q.answer]}. ${escapeHtml(q.options[q.answer])}` : `参考答案/评分要点：\n${escapeHtml(q.sample)}`}</div>
+        </div>
+      `;
+    }
+
+    function updateKeywordPreview(q, value) {
+      const grid = document.getElementById("keywordGrid");
+      if (!grid) return;
+      const normalized = normalize(value);
+      grid.querySelectorAll(".keyword").forEach((el, index) => {
+        const hit = normalized.includes(normalize(q.keywords[index]));
+        el.classList.toggle("hit", hit);
+      });
+    }
+
+    function checkAnswer() {
+      const q = currentQuestion();
+      if (!q || state.answered[q.id]) return;
+
+      if (q.mode === "choice") {
+        if (state.selected === null) {
+          flashShell("先选择一个选项。");
+          return;
+        }
+        const correct = state.selected === q.answer;
+        state.answered[q.id] = { correct, selected: state.selected };
+        if (!correct) addWrong(q);
+        updateStreak(correct);
+      } else {
+        const input = document.getElementById("writtenInput");
+        const value = input ? input.value : state.written;
+        const hitWords = q.keywords.filter(k => normalize(value).includes(normalize(k)));
+        const missing = q.keywords.filter(k => !hitWords.includes(k));
+        const hits = hitWords.length;
+        const correct = hits >= Math.ceil(q.keywords.length * 0.6);
+        state.answered[q.id] = { correct, hits, missing, text: value };
+        if (!correct) addWrong(q);
+        updateStreak(correct);
+      }
+      saveState();
+      render();
+    }
+
+    function updateStreak(correct) {
+      state.streak = correct ? state.streak + 1 : 0;
+      state.bestStreak = Math.max(state.bestStreak || 0, state.streak);
+    }
+
+    function addWrong(q) {
+      if (!state.wrong.some(item => item.id === q.id)) {
+        state.wrong.unshift({ id: q.id, title: q.title, unit: q.unit, type: q.type });
+        state.wrong = state.wrong.slice(0, 12);
+      }
+    }
+
+    function nextQuestion() {
+      const pool = getPool();
+      if (!pool.length) return;
+      state.current = (state.current + 1) % pool.length;
+      state.selected = null;
+      state.written = "";
+      render();
+    }
+
+    function shuffleQuestions() {
+      for (let i = state.order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+      }
+      state.current = 0;
+      state.selected = null;
+      state.written = "";
+      render();
+    }
+
+    function startMockExam() {
+      const pick = (type, count) => shuffleCopy(quizData.filter(q => q.type === type)).slice(0, count);
+      const mock = [
+        ...pick("词汇", 20),
+        ...pick("短语", 5),
+        ...pick("阅读", 10),
+        ...pick("翻译", 2),
+        ...pick("写作", 1)
+      ];
+      state.mockIds = mock.map(q => q.id);
+      state.mockEndsAt = Date.now() + 45 * 60 * 1000;
+      state.mode = "全部题";
+      state.type = "全部";
+      state.unit = "全部";
+      state.search = "";
+      state.onlyMust = false;
+      state.current = 0;
+      state.selected = null;
+      state.written = "";
+      state.order = quizData.map((_, index) => index).sort((a, b) => {
+        const ai = state.mockIds.indexOf(quizData[a].id);
+        const bi = state.mockIds.indexOf(quizData[b].id);
+        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      });
+      startMockTimer();
+      render();
+    }
+
+    function exitMockExam() {
+      state.mockIds = [];
+      state.mockEndsAt = null;
+      if (state.mockTimer) clearInterval(state.mockTimer);
+      state.mockTimer = null;
+      state.current = 0;
+      render();
+    }
+
+    function startMockTimer() {
+      if (state.mockTimer) clearInterval(state.mockTimer);
+      state.mockTimer = setInterval(() => {
+        renderMockBanner();
+        if (state.mockEndsAt && Date.now() >= state.mockEndsAt) {
+          clearInterval(state.mockTimer);
+          state.mockTimer = null;
+        }
+      }, 1000);
+    }
+
+    function renderMockBanner() {
+      if (!state.mockIds.length) {
+        els.mockBanner.classList.remove("show");
+        return;
+      }
+      const remaining = Math.max(0, state.mockEndsAt - Date.now());
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000).toString().padStart(2, "0");
+      const answered = state.mockIds.filter(id => state.answered[id]).length;
+      els.mockInfo.textContent = `模拟考试：${answered}/${state.mockIds.length} 题，剩余 ${minutes}:${seconds}`;
+      els.mockBanner.classList.add("show");
+    }
+
+    function shuffleCopy(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function resetPractice() {
+      state.answered = {};
+      state.wrong = [];
+      state.current = 0;
+      state.selected = null;
+      state.written = "";
+      state.streak = 0;
+      state.bestStreak = 0;
+      saveState();
+      render();
+    }
+
+    function renderStats() {
+      const pool = getPool();
+      const answeredIds = Object.keys(state.answered);
+      const poolAnswered = pool.filter(q => state.answered[q.id]);
+      const correct = poolAnswered.filter(q => state.answered[q.id].correct).length;
+      const accuracy = poolAnswered.length ? Math.round((correct / poolAnswered.length) * 100) : 0;
+      els.poolCount.textContent = pool.length;
+      els.answeredCount.textContent = answeredIds.length;
+      els.accuracy.textContent = `${accuracy}%`;
+      els.position.textContent = pool.length ? `${state.current + 1}/${pool.length}` : "0";
+      els.favoriteCount.textContent = state.favorites.length;
+      els.streakCount.textContent = `${state.streak || 0}`;
+      els.progressFill.style.width = pool.length ? `${Math.round((poolAnswered.length / pool.length) * 100)}%` : "0%";
+      els.typeStats.innerHTML = typeLabels.filter(label => label !== "全部").map(label => {
+        const all = quizData.filter(q => q.type === label);
+        const done = all.filter(q => state.answered[q.id]);
+        const ok = done.filter(q => state.answered[q.id].correct).length;
+        const pct = done.length ? Math.round(ok / done.length * 100) : 0;
+        return `<div class="mini-stat">${label}<strong>${done.length}/${all.length}</strong><span>${pct}%</span></div>`;
+      }).join("");
+
+      if (!state.wrong.length) {
+        els.wrongList.innerHTML = `<p class="empty">暂无错题。答错后会自动收进这里。</p>`;
+      } else {
+        els.wrongList.innerHTML = state.wrong.map(item => `
+          <button class="review-item" data-jump="${item.id}">
+            <strong>${item.unit} ${item.type}</strong><br>${escapeHtml(item.title)}
+          </button>
+        `).join("");
+        document.querySelectorAll("[data-jump]").forEach(btn => {
+          btn.addEventListener("click", () => jumpToQuestion(btn.dataset.jump));
+        });
+      }
+    }
+
+    function renderCoverage() {
+      const selectedWords = wordBank.filter(item => state.unit === "全部" || item.unit === state.unit);
+      const wordRows = selectedWords.map(item => `
+        <tr>
+          <td><strong>${escapeHtml(item.term)}</strong><br><span style="color:var(--muted)">${escapeHtml(item.unit)} · ${escapeHtml(item.category)} · ${escapeHtml(item.priority)}</span></td>
+          <td>${escapeHtml(item.zh)}</td>
+          <td>${escapeHtml(item.usage)}</td>
+        </tr>
+      `).join("");
+
+      els.coverageShell.innerHTML = `
+        <div class="q-meta">
+          <span class="tag">全量覆盖</span>
+          <span class="tag secondary">${wordBank.length} 个词/短语/表达</span>
+          <span class="tag secondary">${quizData.length} 道可练题</span>
+        </div>
+        <h2 style="margin:0;font-size:24px;">全量考试内容</h2>
+        <p class="prompt">这里汇总考试范围、所有词库、阅读 Key、翻译答案和写作素材。上面的刷题区会根据这些内容生成题目，也可以用“模拟考试”做限时综合训练。</p>
+        <div class="library-grid">
+          <div class="library-block">
+            <h3>考试范围</h3>
+            <table class="mini-table">
+              <thead><tr><th>题型</th><th>分值</th><th>范围</th></tr></thead>
+              <tbody>${coverageData.exam.map(row => `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td></tr>`).join("")}</tbody>
+            </table>
+          </div>
+          <div class="library-block">
+            <h3>阅读 Key</h3>
+            <table class="mini-table">
+              <thead><tr><th>阅读</th><th>Key</th><th>定位依据</th></tr></thead>
+              <tbody>${coverageData.readingKeys.map(row => `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td></tr>`).join("")}</tbody>
+            </table>
+          </div>
+          <div class="library-block">
+            <h3>翻译必背</h3>
+            ${coverageData.translations.map(row => `<p><strong>${escapeHtml(row[0])}</strong><br>${escapeHtml(row[1])}</p>`).join("")}
+          </div>
+          <div class="library-block">
+            <h3>写作主题</h3>
+            ${coverageData.writing.map(row => `<p><strong>${escapeHtml(row[0])}</strong><br>${escapeHtml(row[1])}</p>`).join("")}
+          </div>
+        </div>
+        <div class="library-block" style="margin-top:14px;">
+          <h3>全量词库 ${state.unit === "全部" ? "" : "· " + escapeHtml(state.unit)}</h3>
+          <table class="mini-table">
+            <thead><tr><th>词/短语</th><th>中文</th><th>搭配/例句</th></tr></thead>
+            <tbody>${wordRows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function jumpToQuestion(id) {
+      const q = quizData.find(item => item.id === id);
+      if (!q) return;
+      state.type = q.type;
+      state.unit = q.unit;
+      const pool = getPool();
+      const index = pool.findIndex(item => item.id === id);
+      state.current = Math.max(0, index);
+      state.selected = null;
+      state.written = "";
+      render();
+    }
+
+    function toggleFavorite() {
+      const q = currentQuestion();
+      if (!q) return;
+      if (state.favorites.includes(q.id)) {
+        state.favorites = state.favorites.filter(id => id !== q.id);
+      } else {
+        state.favorites.unshift(q.id);
+      }
+      saveState();
+      render();
+    }
+
+    function exportProgress() {
+      const answered = Object.keys(state.answered);
+      const correct = answered.filter(id => state.answered[id].correct).length;
+      const wrongTitles = state.wrong.map(item => `- [${item.unit} ${item.type}] ${item.title}`).join("\n") || "- 暂无错题";
+      const favoriteTitles = state.favorites.map(id => {
+        const q = quizData.find(item => item.id === id);
+        return q ? `- [${q.unit} ${q.type}] ${q.title}` : "";
+      }).filter(Boolean).join("\n") || "- 暂无收藏";
+      const text = [
+        "工程英语互动刷题进度",
+        `导出时间：${new Date().toLocaleString()}`,
+        `总题数：${quizData.length}`,
+        `已作答：${answered.length}`,
+        `正确：${correct}`,
+        `正确率：${answered.length ? Math.round(correct / answered.length * 100) : 0}%`,
+        `当前连续正确：${state.streak || 0}`,
+        `最高连续正确：${state.bestStreak || 0}`,
+        "",
+        "错题本：",
+        wrongTitles,
+        "",
+        "收藏题：",
+        favoriteTitles
+      ].join("\n");
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "工程英语刷题进度.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function flashShell(message) {
+      const old = els.shell.querySelector(".temp-message");
+      if (old) old.remove();
+      const div = document.createElement("div");
+      div.className = "answer-box temp-message";
+      div.textContent = message;
+      els.shell.appendChild(div);
+      setTimeout(() => div.remove(), 1600);
+    }
+
+    function saveState() {
+      localStorage.setItem("engineeringEnglishQuizState", JSON.stringify({
+        answered: state.answered,
+        wrong: state.wrong,
+        favorites: state.favorites,
+        streak: state.streak,
+        bestStreak: state.bestStreak
+      }));
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("engineeringEnglishQuizState") || "{}");
+        if (saved.answered) state.answered = saved.answered;
+        if (saved.wrong) state.wrong = saved.wrong;
+        if (saved.favorites) state.favorites = saved.favorites;
+        if (typeof saved.streak === "number") state.streak = saved.streak;
+        if (typeof saved.bestStreak === "number") state.bestStreak = saved.bestStreak;
+      } catch {
+        state.answered = {};
+        state.wrong = [];
+        state.favorites = [];
+      }
+    }
+
+    function render() {
+      renderFilters();
+      renderQuestion();
+      renderStats();
+      renderCoverage();
+    }
+
+    function normalize(value) {
+      return String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    els.checkBtn.addEventListener("click", checkAnswer);
+    els.nextBtn.addEventListener("click", nextQuestion);
+    els.shuffleBtn.addEventListener("click", shuffleQuestions);
+    els.resetBtn.addEventListener("click", resetPractice);
+    els.favoriteBtn.addEventListener("click", toggleFavorite);
+    els.exportBtn.addEventListener("click", exportProgress);
+    els.printBtn.addEventListener("click", () => window.print());
+    els.mockBtn.addEventListener("click", startMockExam);
+    els.exitMockBtn.addEventListener("click", exitMockExam);
+    els.searchInput.addEventListener("input", event => {
+      state.search = event.target.value.trim();
+      state.current = 0;
+      renderQuestion();
+      renderStats();
+      renderCoverage();
+    });
+    els.clearSearchBtn.addEventListener("click", () => {
+      state.search = "";
+      state.current = 0;
+      render();
+    });
+    els.onlyMustBtn.addEventListener("click", () => {
+      state.onlyMust = !state.onlyMust;
+      state.current = 0;
+      render();
+    });
+
+    window.addEventListener("keydown", event => {
+      const q = currentQuestion();
+      if (!q || event.target.tagName === "TEXTAREA") return;
+      if (["1", "2", "3", "4"].includes(event.key) && q.mode === "choice") {
+        const index = Number(event.key) - 1;
+        if (index < q.options.length && !state.answered[q.id]) {
+          state.selected = index;
+          renderQuestion();
+        }
+      }
+      if (event.key === "Enter") checkAnswer();
+      if (event.key === "ArrowRight") nextQuestion();
+    });
+
+    loadState();
+    render();
+  </script>
+</body>
+</html>
